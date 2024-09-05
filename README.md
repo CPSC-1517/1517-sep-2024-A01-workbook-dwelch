@@ -1,5 +1,6 @@
-# Basic Starter Kit
+# Workbook for Sep 2024 CPSC 1517
 
-## Owner your name
+## Owner Don Welch
 
-alter this statement to indicate the usage of this repository
+This workbook will be used to save class room demonstrations. There will be nothing in the repo that is for evaluation marks.
+
