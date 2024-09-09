@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace OOPsReview
 {
-    public class Employee
+    public class Employment
     {
         //data members (fields, variables)
         //typically data members are private and hold data for use
         //  within your class
         //usually associated with a property
         //a data member does not have an built-in validation
+        private string _Title;
+        private double _Years;
 
         //properties
         //are associated with a single piece of data.
@@ -50,6 +52,64 @@ namespace OOPsReview
         ///                 via the constructor or a method
         /// !!!!! a property DOES NOT have ANY declared incoming parameters !!!!!!
         /// </summary>
+        
+        public string Title
+        {
+            //accessor (getter)
+            //returns the string associated with this property
+            get { return _Title; }
+
+            //mutator (setter)
+            //it is within the set that the validation of the data
+            //  is done to determine if the data is acceptable
+            //if all processing of the string is done via the property
+            //  it will ensure that good data is within the associated string
+            set 
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentNullException("Title", "Title is a required field");
+                _Title = value;
+            }
+        }
+
+        ///<summary>
+        ///Property: Years
+        ///validation: the value must be 0 to greater
+        ///</summary>
+        public double Years
+        {
+            get
+            {
+                return _Years;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException("Years", value,
+                            "Years must be 0 to greater (ie 3.75)");
+                _Years = value;
+            }
+        }
+
+        ///<summary>
+        ///Property: StarDdate
+        ///validation: none
+        ///access: private
+        ///</summary>
+        //since the access to this property for the mutator is private ANY validation
+        //  for this data will need to be done elsewhere
+        //possible locations for the validation could be in
+        //  a) a constructor
+        //  b) any method that will alter the data
+        //a private mutator will NOT allow alteration of the data via a property for the
+        //  outside user, however, methods within the class will still be able to
+        //  use the property
+
+        //this property can be coded as an auto-implemented property
+        public DateTime StartDate { get; private set; }
+
+
+
         //constructors
 
         //methods (aka behaviours)
