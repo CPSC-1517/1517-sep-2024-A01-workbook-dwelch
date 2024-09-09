@@ -1,4 +1,5 @@
-﻿using System;
+﻿//this refers to a namespace
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace OOPsReview
         //a data member does not have an built-in validation
         private string _Title;
         private double _Years;
+        private SupervisoryLevel _Level;
 
         //properties
         //are associated with a single piece of data.
@@ -108,7 +110,18 @@ namespace OOPsReview
         //this property can be coded as an auto-implemented property
         public DateTime StartDate { get; private set; }
 
-
+        ///<summary>
+        ///Property: Level
+        ///validation: none
+        ///note: this is an enum using SupervisoryLevel
+        ///</summary>
+        
+        //can an auto-implemented be coded as a fully implemented
+        public SupervisoryLevel Level
+        {
+            get { return _Level; }
+            set { _Level = value; }
+        }
 
         //constructors
 
