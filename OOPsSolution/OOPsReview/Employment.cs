@@ -69,8 +69,11 @@ namespace OOPsReview
             set 
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentNullException("Title", "Title is a required field");
+                  throw new ArgumentNullException("Title", "Title is a required field");
+              
                 _Title = value;
+
+             
             }
         }
 
@@ -120,11 +123,115 @@ namespace OOPsReview
         public SupervisoryLevel Level
         {
             get { return _Level; }
-            set { _Level = value; }
+            //set { _Level = value; } //default public access
+            private set { _Level = value; }
         }
 
         //constructors
 
+        //your class does not technically need a constructor
+        //if you code a constructor for your class you are responsible for coding ALL constructors
+        //if you do not code a constructor then the system will assign the software datatype defaults
+        //  to your variables (data members/auto-implemented properties)
+
+        //syntax: accesslevel constructorname([list of parameters]) { .... }
+        //NOTE: NO return datatype
+        //      the constructorname MUST be the class name
+
+        //Default
+        //simulates the "system defaults"
+        public Employment()
+        {
+            //if there is no code within this constructor, the actions for setting
+            //  your internal fields will be using the system defaults for the datatype
+
+            //optionally
+            // you could assign values to your intial fields within this constructor typically
+            // using literal values
+            //Why?
+            // your internal fields may have validation attached to the data for the field
+            // this validation is usually within the property
+            // you would wish to have valid data values for your internal fields
+
+            Title = "unknown";
+            Level = SupervisoryLevel.TeamMember;
+            StartDate = DateTime.Today;
+
+            //Years ?
+            //the default is fine (0.0)
+            //however, if you wish you could actually assign the value 0 yourself
+            Years = 0.0;
+        }
+
+        //Greedy
+        //this is the constructor typically used to assign values to a instance at the time of
+        //    creation
+        //the list of parameters may or maynot contain default parameter values
+        //if you have assigned default parameter values then those parameters MUST be at the end of
+        //  the parameter list
+
+        public Employment (string title, SupervisoryLevel level,
+                            DateTime startdate, double years = 0.0)
+        {
+            Title = title;
+            Level = level;
+            Years = years;
+
+            //one could add valiation, especially if the property has a private set  OR the property
+            //  is an auto-implemented property that has restrictions
+            //example
+            //validation, start date must not exist in the future
+            //validation can be done anywhere in your class
+            //since the property is auto-implemented AND/OR has a private set,
+            //      validation can be done  in the constructor OR a behaviour 
+            //      that alters the property
+            //IF the validation is done in the property, IT WOULD NOT be an
+            //      auto-implemented property BUT a fully-implemented property
+            // .Today has a time of 00:00:00 AM
+            // .Now has a specific time of day 13:05:45 PM
+            //by using the .Today.AddDays(1) you cover all times on a specific date
+
+            if (startdate >= DateTime.Today.AddDays(1))
+            {
+                throw new ArgumentException($"The start date {startdate} is in the future.","Startdate");
+            }
+            StartDate =startdate;
+        }
+
         //methods (aka behaviours)
+
+        //syntax: access returndatatype methodname ([list of parameters]) { ..... }
+
+        //REMEMBER: YOU HAVE ACCESS TO ALL VALUES WITHIN THE INSTANCE SO YOU DO NOT
+        //          HAVE TO PASS IN VALUES THAT ARE ALREADY CONTAINED IN THE INSTANCE.
+
+        public override string ToString()
+        {
+            //this string is known as a "comma separate value" string (csv)
+            //concern: when the date is used, it could have a , within the data value
+            //solution: IF this is a possibillity that a value that is used in createing the string pattern
+            //              could make the pattern invalid, you should explicitly handle how the value should be
+            //              displayed in the string
+            return $"{Title},{Level},{StartDate.ToString("MMM dd yyyy")},{Years}";
+        }
+
+        //if SypervisoryLevel setter is private this means altering the Level must be done in constructor
+        //(which executes ONLY ONCE during creation) or via a method
+        public void SetEmploymentResponsibilityLevel(SupervisoryLevel level)
+        {
+            Level = level;
+        }
+
+        //StartDate is private set
+        //Note: when you have a private set, you MAY NEED to duplicate validation in several places
+        //(constructor AND this method)
+        public void CorrectStartDate(DateTime startdate)
+        {
+            if (startdate >= DateTime.Today.AddDays(1))
+            {
+                throw new ArgumentException($"The start date {startdate} is in the future.", "Startdate");
+            }
+            StartDate =startdate;
+        }
     }
 }
