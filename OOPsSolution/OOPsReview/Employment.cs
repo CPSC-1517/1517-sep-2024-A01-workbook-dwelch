@@ -1,9 +1,14 @@
 ﻿//this refers to a namespace
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+#region Additional Namespaces
+using CommonMethods;
+#endregion
 
 namespace OOPsReview
 {
@@ -89,7 +94,8 @@ namespace OOPsReview
             }
             set
             {
-                if (value < 0)
+                //if (value < 0)
+                if (!Utilities.IsZeroOrPositive(value))
                     throw new ArgumentOutOfRangeException("Years", value,
                             "Years must be 0 to greater (ie 3.75)");
                 _Years = value;
