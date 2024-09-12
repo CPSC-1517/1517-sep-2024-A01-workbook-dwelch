@@ -202,6 +202,21 @@ namespace OOPsReview
                 throw new ArgumentException($"The start date {startdate} is in the future.","Startdate");
             }
             StartDate =startdate;
+
+            //the unit test discovered that the years is not being correctly calculate
+            //  if the default value for the parameter is used
+            //the constructor should calculate the years from the supplied startdate
+            //  to the current date
+            if (years > 0.0)
+            {
+                Years = years;
+            }
+            else
+            {
+                TimeSpan span = DateTime.Today - StartDate;
+                Years = Math.Round((span.Days / 365.2), 1);
+            }
+
         }
 
         //methods (aka behaviours)
