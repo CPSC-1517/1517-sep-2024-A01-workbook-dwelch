@@ -130,7 +130,14 @@ namespace OOPsReview
         {
             get { return _Level; }
             //set { _Level = value; } //default public access
-            private set { _Level = value; }
+            private set 
+            {
+                //once this validation is added to this psuedo "auto-implement" property 
+                //  it would need to be considered a fully-implemented property
+                if (!Enum.IsDefined(typeof(SupervisoryLevel), value))
+                    throw new ArgumentException($"Invalid supervisory level value of {value} ", "Level");
+                _Level = value; 
+            }
         }
 
         //constructors
@@ -253,6 +260,13 @@ namespace OOPsReview
                 throw new ArgumentException($"The start date {startdate} is in the future.", "Startdate");
             }
             StartDate =startdate;
+
+            //concern
+            //if the startdate has been altered from the creation of the
+            //  instance WHERE the years has been set, then should the 
+            //  years be recalculated?
+            TimeSpan days = DateTime.Today - startdate;
+            Years = Math.Round((days.Days / 365.2), 1);
         }
     }
 }
