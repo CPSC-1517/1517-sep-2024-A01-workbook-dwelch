@@ -142,6 +142,22 @@ namespace TDDUnitTesting
         #region properties
         //valid data
         [Fact]
+        public void Retrieve_FullName()
+        {
+            //Arrange (setup of needed code for doing the test)
+            string expectedFullName = "Behold, Lowand";
+
+            Person sut = new Person("Lowand", "Behold", null, null);
+
+            //Act ( this is the action that is under testing)
+            // sut: subject under test
+            string fullname = sut.FullName;
+
+            //Assert (check the results of the act against expected values)
+            fullname.Should().Be(expectedFullName);
+
+        }
+        [Fact]
         public void Change_First_Name_Via_Property()
         {
             //Arrange (setup of needed code for doing the test)
