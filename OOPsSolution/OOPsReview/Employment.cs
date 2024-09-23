@@ -76,7 +76,10 @@ namespace OOPsReview
                 if (string.IsNullOrWhiteSpace(value))
                   throw new ArgumentNullException("Title", "Title is a required field");
               
-                _Title = value;
+                //it is a very good practice to remove leading and trailing spaces on strings
+                //  so that only the required and important characters are stored.
+                //to do this santization use .Trim()
+                _Title = value.Trim();
 
              
             }

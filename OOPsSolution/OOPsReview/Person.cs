@@ -17,7 +17,7 @@ namespace OOPsReview
             {
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentNullException("FirstName", "First Name cannot be empty or blank");
-                _FirstName = value;
+                _FirstName = value.Trim();
             }
         }
         public string LastName
@@ -27,7 +27,7 @@ namespace OOPsReview
             {
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentNullException("LastName", "Last Name cannot be empty or blank");
-                _LastName = value;
+                _LastName = value.Trim();
             }
         }
         public ResidentAddress Address { get; set; }
@@ -58,6 +58,13 @@ namespace OOPsReview
         {
             FirstName = firstname;
             LastName = lastname;
+        }
+
+        public void AddEmployment(Employment position)
+        {
+            if (position == null)
+                throw new ArgumentNullException("Employment Position", "Position data is required");
+            EmploymentPositions.Add(position);
         }
     }
 }
