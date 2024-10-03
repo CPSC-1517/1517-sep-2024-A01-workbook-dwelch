@@ -37,10 +37,14 @@
 
     private void TextProcessing()
     {
-        
-       feedback = $"Email {emailText} -- Password {passwordText} --  DateTime {datetimeText.ToShortDateString()}";
-      
+
+        feedback = $"Email {emailText} -- Password {passwordText} --  DateTime {datetimeText.ToShortDateString()}";
+
     }
 
-
+    protected override void OnInitialized()
+    {
+        datetimeText = DateTime.Today;
+        base.OnInitialized();
+    }
 }
