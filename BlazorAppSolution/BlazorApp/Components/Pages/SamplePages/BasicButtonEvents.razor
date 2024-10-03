@@ -13,7 +13,7 @@
 
 <blockquote style="background-color:aquamarine;">
     This page will demonstrate the basics of button events. It will use a &lt;input&gt; control
-    to ask for some user input. It will use a &lt;buttn&gt; control to process the input.
+    to ask for some user input. It will use a &lt;button&gt; control to process the input.
     It will demonstrate basic use of C# code to do the processing.
 </blockquote>
 <br/>
@@ -34,6 +34,14 @@
     of the page; after the action the page is re-rendered and returned to the browser as html
 -->
 <button type="submit" @onclick="Clear">Clear</button>
+
+<br/><br/>
+
+<label for="inputcontrol">Enter an H for heads or T for tails:</label>
+&nbsp;&nbsp;
+<input type="text" id="inputcontrol" placeholder="eg: H" @bind="inputValue" />
+&nbsp;&nbsp;
+<button type="submit" @onclick="Game" class="btn btn-outline-primary">Enter</button>
 @code {
          /*
          * the comment in the block as everything in this coding block is C#
@@ -46,6 +54,7 @@
      */
 
     private string WelcomeMsg = "";
+    private string inputValue = "";
 
     //there are special events already created for the blazor component
     // one is the ability to execute code as the page is 1st created
@@ -61,5 +70,43 @@
     private void Clear()
     {
         WelcomeMsg = "";
+    }
+
+    private void Game()
+    {
+        WelcomeMsg = "";
+        Random rnd = new Random();
+        int flip = rnd.Next(0, 2);
+        if (flip == 0) //heads
+        {
+            if (inputValue.ToUpper().Trim() == "H")
+            {
+                WelcomeMsg = "You guessed the computer flip";
+            }
+            else if (inputValue.ToUpper().Trim() == "T")
+            {
+                WelcomeMsg = "You did not guessed the computer flip";
+            }
+            else
+            {
+                WelcomeMsg = "You did not enter an H or T";
+            }
+
+        }
+        else
+        {
+            if (inputValue.ToUpper().Trim() == "T")
+            {
+                WelcomeMsg = "You guessed the computer flip";
+            }
+            else if (inputValue.ToUpper().Trim() == "H")
+            {
+                WelcomeMsg = "You did not guessed the computer flip";
+            }
+            else
+            {
+                WelcomeMsg = "You did not enter an H or T";
+            }
+        }
     }
 }
