@@ -1,0 +1,38 @@
+﻿@page "/dataentry"
+<PageTitle>Data Entry</PageTitle>
+@rendermode InteractiveServer
+
+@* since our Employment and SupervisorLevl class/enum are in a different namespace
+    we need to add a using statement
+*@
+@using OOPsReview;
+@using CommonMethods;
+
+<h1>Data Entry</h1>
+
+@* wish to add a blockquote but center the control on the page
+    to do so will required the use of bootstrap
+*@
+<div class="row">
+    <div class="offset-1 col-md-10">
+        <blockquote style="background-color:gainsboro;">
+            <p>
+                This component will demonstrate how your page can handle validation of data input,
+                showing validation messages when you have a number of controls for data entry. This
+                component will validate the locate controls and create any validation messages for
+                invalid data. The messages can be collected using various techniques such as: List or
+                Dictionary.
+            </p>
+            <p>
+                This page will input data for an instance of the Employment class. This demo will
+                use the Employment class from the OOPs review. The SupervisoryLevel enum
+                class will also be brought into this project. One could have included the entire
+                class library as part of this solution instead of bringing in individual classes.
+            </p>
+        </blockquote>
+    </div>
+</div>
+
+@code {
+
+}
