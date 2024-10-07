@@ -33,6 +33,128 @@
     </div>
 </div>
 
-@code {
 
+@* feedback area
+    success messages
+    error messages
+*@
+
+<!-- success message area
+    checks if there is a feedback message, if so display
+-->
+@if(feedback.Length > 0)
+{
+    <div class="alert alert-info">
+        <p>@feedback</p>
+    </div>
+}
+
+<!-- error message area
+    checks if there is are error message(s), if so display
+-->
+@if(errormsgs.Count > 0)
+{
+    <div class="alert alert-danger">
+        <p>Please fix the following issues:</p>
+        <ul>
+            @foreach(var error in errormsgs)
+            {
+                <!--
+                    due to the structure of a Dictionary entry
+                    there are two components: key and value
+                    Here we wish to just use the value
+
+                    If this was a List collection there is only
+                    one component, the string
+                    therfore you would NOT need the .Value
+
+                -->
+                <li>@error.Value</li>
+            }
+        </ul>
+    </div>
+}
+
+@*
+    form area
+    standard html controls
+    use bootstrap for formating
+    each control will be on a separate "row"
+*@
+
+<fieldset>
+    <legend>Employment Data</legend>
+
+    <div class="row">
+        <!-- two column display for alignment: Label and control-->
+        <div class="col-md-2">
+            <label for="title">Position Title:</label>
+        </div>
+        <div class="col-md-2">
+            <input type="text" id="title" @bind="employmentTitle"
+                placeholder="enter position title" />
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-md-2">
+            <label for="startdate">Start Date:</label>
+        </div>
+        <div class="col-md-2">
+            <input type="date" id="startdate" @bind="StartDate"/>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <label for="years">Years in Position:</label>
+        </div>
+        <div class="col-md-2">
+            <input type="number" id="years" @bind="empYears" 
+                step="0.1" min="0"
+                style="width:75px;"
+                placeholder="eg: 3.4"/>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <label for="level">Select Supervisory Level:</label>
+        </div>
+        <div class="col-md-2">
+            <!-- selction control-->
+            <select @bind="empLevel">
+                <!-- prompt line-->
+                <option value="None">select ...</option>
+                <!-- is a line for each item in the Enum
+                     you could hard-code each option
+                     you can also access the Enum definition as if it
+                        were a collection
+                -->
+                @foreach(var item in Enum.GetValues(typeof(SupervisoryLevel)))
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+        </div>
+    </div>
+
+</fieldset>
+
+@code {
+    private string feedback = "";
+    private Dictionary<string, string> errormsgs = new ();
+    //could be using a List<string> as well as this Dictionary
+    //private List<string> errormsgs = new ();
+
+    private string employmentTitle = "";
+    private DateTime StartDate;
+    private double empYears = 0;
+    private SupervisoryLevel empLevel;
+
+    protected override void OnInitialized()
+    {
+        StartDate = DateTime.Today;
+        base.OnInitialized();
+    }
 }
