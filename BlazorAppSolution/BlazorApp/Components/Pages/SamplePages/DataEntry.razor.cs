@@ -43,7 +43,45 @@ namespace BlazorApp.Components.Pages.SamplePages
 
         private void OnCollect()
         {
-            feedback = "inside collect";
+            feedback = ""; //clear out any old messages
+            errormsgs.Clear(); //clear out all existing keys and their values from the Dictionary
+
+            //primitive validation
+            //  presence
+            //  datatype/pattern
+            //  range of values
+
+            //Business Rules (aka your validation requirements)
+            //title must be presence, must have at least one character
+            //start date cannot be in the future
+            //years cannot be less than zero
+
+            if (string.IsNullOrWhiteSpace(employmentTitle))
+            {
+                //if there is a violation of the rule
+                //we wish to collect the error and display to the user
+                //we are using a Dictionary in this example that has two components
+                //  a) a unquie value that is treated as a key
+                //  b) a string which represents the value associated with the key
+                errormsgs.Add("Title","Title is required");
+            }
+
+            if (StartDate >= DateTime.Today.AddDays(1))
+            {
+                errormsgs.Add("StartDate", "Start Date is in the future. Must be today or in the past.");
+            }
+
+            if(empYears < 0)
+            {
+                errormsgs.Add("Years", "Years must be 0 or greater (partial years are allowed eg 3.6)");
+            }
+
+            if (errormsgs.Count == 0)
+            {
+                //at this point in the collection, the dat is "deemed" acceptable
+                //at this point your can continue the processing of your data
+                feedback = $"Entered data is {employmentTitle}, {StartDate}, {empYears}, {empLevel}";
+            }
         }
 
         //this method is being done as an async task as it has to wait for the user
@@ -53,6 +91,8 @@ namespace BlazorApp.Components.Pages.SamplePages
         private async Task OnClear()
         {
             feedback = "";
+           
+
 
             //issue a prompt dialogue to the user to obtain confirmation of the action
             //create your message for the dialogue box into a generic object
@@ -60,6 +100,7 @@ namespace BlazorApp.Components.Pages.SamplePages
                 " Are you sure you want to clear the form?" };
             if (await JSRuntime.InvokeAsync<bool>("confirm", messageline))
             {
+                errormsgs.Clear(); //clear out all existing keys and their values from the Dictionary
                 employmentTitle = "";
                 StartDate = DateTime.Today;
                 empYears = 0;
