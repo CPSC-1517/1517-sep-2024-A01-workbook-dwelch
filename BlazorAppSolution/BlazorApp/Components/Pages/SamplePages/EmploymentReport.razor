@@ -1,0 +1,55 @@
+﻿@page "/report"
+<PageTitle>Tabular Report</PageTitle>
+@rendermode InteractiveServer
+@using OOPsReview;
+@using CommonMethods;
+
+<h1>Employment Report</h1>
+<h3>demonstrate tabular reporting and File I/O using File methods</h3>
+
+@if (feedback.Length > 0)
+{
+    <div class="alert alert-info">
+        <p>@feedback</p>
+    </div>
+}
+
+@if (errormsgs.Count > 0)
+{
+    <div class="alert alert-danger">
+        <p>Please fix the following issues:</p>
+        <ul>
+            @foreach (var error in errormsgs)
+            {
+                <!--
+                    the errormsgs 1s a List collection there is only
+                    one component, the string
+                    therfore you would NOT need the .Value
+
+                -->
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+@*
+    form area
+    standard html controls
+    use bootstrap for formating
+    each control will be on a separate "row"
+*@
+
+@code {
+    private string feedback = "";
+    private List<string> errormsgs { get; set; } = new List<string>();
+
+    private Exception GetInnerException(Exception ex)
+    {
+        //drill down into your Exception until there are no more inner exceptions
+        //at this point you have the "real" error
+        while (ex.InnerException != null)
+            ex = ex.InnerException;
+        return ex;
+    }
+}
