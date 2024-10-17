@@ -39,17 +39,39 @@
     use bootstrap for formating
     each control will be on a separate "row"
 *@
+@if (employments == null)
+{
+    <p>You need to have a csv file containing your employment data.</p>
+}
+else if( employments.Count == 0)
+{
+    <p>No Employments to report</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Start Date</th>
+                <th>Level</th>
+                <th>Years</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in employments)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.StartDate.ToShortDateString()</td>
+                    <td>@item.Level</td>
+                    <td>@item.Years</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
-    private string feedback = "";
-    private List<string> errormsgs { get; set; } = new List<string>();
-
-    private Exception GetInnerException(Exception ex)
-    {
-        //drill down into your Exception until there are no more inner exceptions
-        //at this point you have the "real" error
-        while (ex.InnerException != null)
-            ex = ex.InnerException;
-        return ex;
-    }
+   
 }
