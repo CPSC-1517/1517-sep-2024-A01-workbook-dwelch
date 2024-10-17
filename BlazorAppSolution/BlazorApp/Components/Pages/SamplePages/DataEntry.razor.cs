@@ -34,6 +34,10 @@ namespace BlazorApp.Components.Pages.SamplePages
         [Inject]
         public IWebHostEnvironment webHostEnvironment { get; set; } //auto implemented property
 
+        //this variable is for the Navigational services
+        [Inject]
+        private NavigationManager navigationManager { get; set; }
+
         protected override void OnInitialized()
         {
             StartDate = DateTime.Today;
@@ -205,6 +209,14 @@ namespace BlazorApp.Components.Pages.SamplePages
                 empYears = 0;
                 empLevel = SupervisoryLevel.Entry;
             }
+        }
+
+        private void GoToReport()
+        {
+            //this event will use the Navigate services of the web software
+            //the Navigate services must be injected into the page
+            //the location you are going to is reference by the page's routing name
+            navigationManager.NavigateTo("report");
         }
     }
 }
