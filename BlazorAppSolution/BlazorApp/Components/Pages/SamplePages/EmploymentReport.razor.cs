@@ -42,7 +42,7 @@ namespace BlazorApp.Components.Pages.SamplePages
             //syntax:   string filename = @"./foldername/.../filename.csv"
             string filepathname = @"./Data/";
             string[] filenames = new string[] { "Employments.csv", "BadEmployments.csv", "EmptyEmployments.csv" };
-            string filename = @$"{filepathname}{filenames[1]}";
+            string filename = @$"{filepathname}{filenames[0]}";
 
 
             //The System.IO.File method ReadAllLines() will return an array
@@ -73,7 +73,7 @@ namespace BlazorApp.Components.Pages.SamplePages
                 }
                 else
                 {
-                    throw new Exception($"File {filenames[1]} does not exist");
+                    throw new Exception($"File {filenames[0]} does not exist");
                 }
             }
             catch(Exception ex)

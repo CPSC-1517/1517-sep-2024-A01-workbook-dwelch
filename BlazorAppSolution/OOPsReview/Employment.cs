@@ -38,7 +38,7 @@ namespace OOPsReview
         //  to execute for control over the data: such as validation
         //fully implemented properties will have a declared data
         //  member to store the data into
-
+        
         //auto implemented properties do not have additional logic
         //Auto implemented properties do not have a declared
         //  data member instead the o/s will create on the property's
@@ -59,7 +59,7 @@ namespace OOPsReview
         ///                 via the constructor or a method
         /// !!!!! a property DOES NOT have ANY declared incoming parameters !!!!!!
         /// </summary>
-
+        
         public string Title
         {
             //accessor (getter)
@@ -71,17 +71,17 @@ namespace OOPsReview
             //  is done to determine if the data is acceptable
             //if all processing of the string is done via the property
             //  it will ensure that good data is within the associated string
-            set
+            set 
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentNullException("Title", "Title is a required field");
-
+                  throw new ArgumentNullException("Title", "Title is a required field");
+              
                 //it is a very good practice to remove leading and trailing spaces on strings
                 //  so that only the required and important characters are stored.
                 //to do this santization use .Trim()
                 _Title = value.Trim();
 
-
+             
             }
         }
 
@@ -127,19 +127,19 @@ namespace OOPsReview
         ///validation: none
         ///note: this is an enum using SupervisoryLevel
         ///</summary>
-
+        
         //can an auto-implemented be coded as a fully implemented
         public SupervisoryLevel Level
         {
             get { return _Level; }
             //set { _Level = value; } //default public access
-            private set
+            private set 
             {
                 //once this validation is added to this psuedo "auto-implement" property 
                 //  it would need to be considered a fully-implemented property
                 if (!Enum.IsDefined(typeof(SupervisoryLevel), value))
                     throw new ArgumentException($"Invalid supervisory level value of {value} ", "Level");
-                _Level = value;
+                _Level = value; 
             }
         }
 
@@ -186,7 +186,7 @@ namespace OOPsReview
         //if you have assigned default parameter values then those parameters MUST be at the end of
         //  the parameter list
 
-        public Employment(string title, SupervisoryLevel level,
+        public Employment (string title, SupervisoryLevel level,
                             DateTime startdate, double years = 0.0)
         {
             Title = title;
@@ -209,7 +209,7 @@ namespace OOPsReview
 
             if (startdate >= DateTime.Today.AddDays(1))
             {
-                throw new ArgumentException($"The start date {startdate} is in the future.", "Startdate");
+                throw new ArgumentException($"The start date {startdate} is in the future.","Startdate");
             }
             StartDate =startdate;
 
@@ -271,7 +271,6 @@ namespace OOPsReview
             TimeSpan days = DateTime.Today - startdate;
             Years = Math.Round((days.Days / 365.2), 1);
         }
-
         //create a method that would accept a string and convert the data within the string
         //  into an instance of Employment. Return the instance.
         //this would be the parsing of the string

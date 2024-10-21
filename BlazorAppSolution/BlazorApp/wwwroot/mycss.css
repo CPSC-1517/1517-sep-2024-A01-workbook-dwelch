@@ -1,0 +1,68 @@
+﻿:root {
+    --max-body-width: 90rem;
+}
+
+.setflex {
+    display: flex;
+}
+
+.onethird {
+    width: 31%;
+    margin-right: 2%;
+}
+
+.onehalf {
+    width: 47%;
+    margin-right: 3%;
+}
+
+.centermain40 {
+    width: 40%;
+    margin-left: 30%;
+}
+
+.smallbox {
+    width: 60px;
+}
+
+.mediumbox {
+    width: 120px;
+}
+
+.bigbox {
+    width: 250px;
+}
+
+.bighalfpage {
+    width: 57%;
+    margin-right: 3%;
+}
+
+.smallhalfpage {
+    width: 37%;
+    margin-right: 3%;
+}
+
+.lefthalfpage {
+    width: 45%;
+    margin-right: 5%;
+}
+
+.righthalfpage {
+    width: 45%;
+    margin-left: 5%;
+}
+
+.linkcolor {
+    color: white;
+    background-color: dodgerblue;
+}
+
+.danger {
+    color: var(--danger-text-color);
+    background-color: var(--danger-color);
+}
+
+.footerspacing{
+    margin-top:24px;
+}
