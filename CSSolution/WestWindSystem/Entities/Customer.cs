@@ -12,12 +12,13 @@ namespace WestWindSystem.Entities;
 [Index("AddressID", Name = "UX_Customers_AddressID", IsUnique = true)]
 public partial class Customer
 {
-    [Key]
-    [StringLength(5)]
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [StringLength(5,ErrorMessage ="Customer ID is limited to 5 characters")]
     public string CustomerID { get; set; }
 
-    [Required]
-    [StringLength(40)]
+    //Required, StringLength, Range annotation are used for validation
+    [Required(ErrorMessage = "Company name is required")]
+    [StringLength(40, ErrorMessage = "Company name is limited to 40 characters")]
     public string CompanyName { get; set; }
 
     [Required]
