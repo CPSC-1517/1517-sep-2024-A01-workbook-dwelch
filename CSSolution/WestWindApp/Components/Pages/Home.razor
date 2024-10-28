@@ -1,7 +1,32 @@
 ﻿@page "/"
-
 <PageTitle>Home</PageTitle>
+@using WestWindSystem.BLL;
+@using WestWindSystem.Entities;
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+<p>WestWind Database Version Major: @buildVersion.Major Minor: @buildVersion.Minor
+        Build: @buildVersion.Build Version Date: @buildVersion.ReleaseDate.ToShortDateString()</p>
+
+@code{
+    private BuildVersion buildVersion{get;set;}
+
+    //inject the BuildVersionServices 
+    [Inject]
+    public BuildVersionServices _buildVersionServices{get;set;}
+
+    protected override void OnInitialized()
+    {
+        //consume a service
+
+        //the service class exists for use within this component via the injection
+        //the actual access to the services is via the IServiceCollection
+        //my service were made available to this component due to the fact that the
+        //  services were requested with the build of the app during Program.cs
+        //buildVersion hold the access provided by IServiceCollection to the stated
+        //  serivces
+        buildVersion = _buildVersionServices.BuildVersion_Get();
+        base.OnInitialized();
+    }
+}
