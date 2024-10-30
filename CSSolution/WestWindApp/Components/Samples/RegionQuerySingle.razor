@@ -1,0 +1,77 @@
+﻿@page "/singlequery"
+<PageTitle>Single Record Query</PageTitle>
+<!-- remember if you have buttons you need this line to activate -->
+@rendermode InteractiveServer 
+
+
+
+<h1>Region Query</h1>
+<h4>...single record query</h4>
+
+@if (feedback.Length > 0)
+{
+    <div class="alert alert-info">
+        <p>@feedback</p>
+    </div>
+}
+
+@if (errormsgs.Count > 0)
+{
+    <div class="alert alert-danger">
+        <p>Please fix the following issues:</p>
+        <ul>
+            @foreach (var error in errormsgs)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+@*
+    form area
+    standard html controls
+    use bootstrap for formating
+    each control will be on a separate "row"
+    form will be two column 
+*@
+<div class="row">
+    <div class="col-md-6">
+        <!-- this column will hold the query input controls-->
+        <p><strong>Input of query values</strong></p>
+        <label for="regionid">Enter a regionid:</label>&nbsp;&nbsp;
+        <input id="regionid" type="number" @bind="regionidarg"
+               style="width:75px;" />&nbsp;&nbsp;
+        <button type="submit" class="btn btn-outline-secondary rounded-pill"
+                @onclick="GetByID">Fetch By Key</button>
+        <br /><br />
+        <label for="regionlist">Select a region:</label>&nbsp;&nbsp;
+        <select id="regionlist" @bind="regionselectarg" style="width:200px;">
+            <option value="0">... select region</option>
+            @foreach(var item in regionList)
+            {
+                <option value="@item.RegionID">@item.RegionDescription</option>
+            }
+        </select>&nbsp;&nbsp;
+        <button type="submit" class="btn btn-outline-secondary rounded-pill"
+                @onclick="GetBySelection">
+            Fetch By Selection
+        </button>
+    </div>
+    <div class="col-md-6">
+        <!-- this column will hold the query output controls-->
+        <p><strong>Display result of query</strong></p>
+        @if (datainfo != null)
+        {
+            <p>Region Id; @datainfo.RegionID</p>
+            <p>Description: @datainfo.RegionDescription</p>
+        }
+        else
+        {
+            <p> No data found for requested query</p>
+        }
+    </div>
+</div>
+@code {
+   
+}
