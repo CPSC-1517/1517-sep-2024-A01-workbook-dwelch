@@ -1,0 +1,176 @@
+﻿@page "/tablequery"
+<PageTitle>Table Query</PageTitle>
+@rendermode InteractiveServer
+@using WestWindSystem.BLL;
+@using WestWindSystem.Entities;
+
+<h3>Shipment Table</h3>
+<h4>... non primary key filter search</h4>
+
+<!-- area to feedback messages-->
+@if (feedback.Length > 0)
+{
+    <div class="alert alert-info">
+        <p>@feedback</p>
+    </div>
+}
+<!-- area to error messages-->
+@if (errors.Count > 0)
+{
+    <div class="alert alert-danger">
+        <p>Please fix the following issues:</p>
+        <ul>
+            @foreach (var error in errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <p><strong>Input of query values</strong></p>
+        <label for="year">Enter shipment year:</label> &nbsp;&nbsp;
+        <input id="year" type="number" @bind="yeararg"
+               style="width:75px" />
+        <br />
+        <label for="month">Enter shipment month:</label> &nbsp;&nbsp;
+        <input id="month" type="number" @bind="montharg"
+               style="width:75px" />
+        <br />
+        <button type="submit" @onclick="GetByYearAndMonth"
+              class="btn btn-outline-primary rounded-pill">Fetch Shipments</button>
+    </div>
+    <div class="col-md-9">
+        <p><strong>Display of query results</strong></p>
+        <!-- check to see if there is results to display or if a message should be displayed-->
+        @if (datainfo.Count == 0)
+        {
+            <p> No data found for requested query</p>
+        }
+        else
+        {
+            //to reduce the number of data rows being displayed there are two techniques
+            //a) pagination
+            //b) scrolling
+
+            //this example uses the quick and easy technique of scrolling
+            //Note the table is surrounded by a div tag
+            //     on the div tag is 2 parameters
+            //      the class causes the scroll (built into bootstrap)
+            //      the style specifies the height of the display area
+
+            //depending on the zoom of window you may seem to lose some of the last line
+
+            //the shipment record has a field called ShipVia which is foreign key (1, 2, 3, etc)
+            //displaying that is meaningless to someone reading the data unless they were familiar with
+            //      the pkey value associated with which company
+            //solution: display the company name
+            //Problem: the name is in a different table
+
+            //If you look at the entities, records with fields used in sql scheme relationships
+            //      have virtual navigational properties (see bottom of entity)
+            //These properties allow you to have access to data in the related table
+
+            //How to use
+
+            //When you use the property just treat it as the name of an object so accessing the
+            //      desired field in the related table just needs the dot (.) operator
+            //In this example, the property is ShipViaNavigation which points to the Shippers table
+            //      and the desired field from the Shippers table was CompanyName
+            <div class="overflow-scroll" style="height:450px;">
+                <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Shipper</th>
+                        <th>Freight $</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in datainfo)
+                    {
+                        <tr>
+                            <td>@item.ShipmentID</td>
+                            <td>@item.OrderID</td>
+                            <td>@item.ShippedDate.ToShortDateString()</td>
+                            <td>@item.ShipViaNavigation.CompanyName</td>
+                            <td>@(string.Format("{0:#,##0.00}",item.FreightCharge))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    private string feedback = "";
+    private List<string> errors = new List<string>();
+
+    private int yeararg = 0;
+    private int montharg = 0;
+
+    //create variables for query interaction
+    private List<Shipment> datainfo = new List<Shipment>();
+    [Inject]
+    public ShipmentServices _shipmentServices { get; set; }
+
+    // [Inject]
+    // public ShipperServices _shipperServices { get; set; }
+    // public List<Shipper> shipperList = new List<Shipper>();
+
+    // protected override void OnInitialized()
+    // {
+    //     //there are two techniques to allow the use of navigational properties on your page
+    //     //     // a) bring in a dataset of the table to which you are attempting to navigate
+    //     //     // b) use the .Include method on the query itself (see Shipment query for this technique in BLL ShipmentServices)
+
+    //     //     //Technique (a)
+    //     //     //this data set is needed to handle the navigation reference used on the table data cell
+    //     //     //      to display the shipper company name
+    //     //     //no other coding is needed, the system will match up the dataset to the usage in the table above
+
+    //     shipperList = _shipperServices.Shipper_GetAll();
+    //     base.OnInitialized();
+    // }
+    private void GetByYearAndMonth()
+
+    {
+        feedback = "";
+        errors.Clear();
+
+        //check simply logical validation
+        if (yeararg < 1950 || yeararg > DateTime.Today.AddDays(1).Year)
+        {
+            errors.Add("Year needs to be between 1950 and today");
+        }
+        if (montharg < 1 || montharg > 12)
+        {
+            errors.Add("Month is invalid, use 1 to 12");
+        }
+        if (errors.Count == 0)
+        {
+            //the query arguments are deemed valid
+            //since the next statement calls a services which
+            //  in itself could abort, the call NEEDS to be in a try/catch
+            try
+            {
+                //need to call a service
+                //    is the inject done
+                //    do you have your service method
+                //    do you have your receiving variable
+                datainfo = _shipmentServices.Shipment_GetByYearAndMonth(yeararg, montharg);
+            }
+            catch(Exception ex)
+            {
+                errors.Add($"System error: {ex.Message}");
+            }
+        }
+    }
+}
