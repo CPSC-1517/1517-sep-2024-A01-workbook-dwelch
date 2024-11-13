@@ -1,0 +1,77 @@
+﻿@page "/productcrud"
+<PageTitle>Product CRUD</PageTitle>
+@rendermode InteractiveServer
+@using WestWindSystem.BLL;
+@using WestWindSystem.Entities;
+
+<h3>Product  CRUD</h3>
+<h4>... sample of maintaining a database record using CRUD</h4>
+
+<!-- area to feedback messages-->
+@if (feedback.Length > 0)
+{
+    <div class="alert alert-info">
+        <p>@feedback</p>
+    </div>
+}
+<!-- area to error messages-->
+@if (errors.Count > 0)
+{
+    <div class="alert alert-danger">
+        <p>Please fix the following issues:</p>
+        <ul>
+            @foreach (var error in errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+<!-- EditForm this groups a bunch of controls as a single form
+              allows for adding additonal option to integrate with your form controls
+              contains a set of enhanced input controls
+
+    register an EditContext instance for this form
+
+     DataAnnotationsValidator   the DataAnnotationsValidator component is used within an
+                                EditForm to enable validation based on data annotations
+                                applied to model properties.
+
+     ValidationSummary displays a list of all validation errors
+                      show a summary of errors at the top of the form
+                      errors can be from model properties or custom messages
+                      this is optional
+
+    one can still use bootstrap customization of the form appearance
+-->
+<EditForm EditContext="@editContext">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="row">
+        <div> class="offset-1 col-md-5">
+            <label for="productid" class="form-label">Product ID</label> 
+            <!-- bind-Value is required when using EditForm controls
+                 EditForm controls are self closing
+                 no type is need for the EditForm control-->
+            <InputNumber @bind-Value="CurrentProduct.ProductID"
+                    class="form-control" id="productid" readonly />
+        </div>
+    </div>
+</EditForm>
+@code {
+    private string feedback = "";
+    private List<string> errors = new List<string>();
+
+    //for EditForm
+    private EditContext editContext;
+    private Product CurrentProduct = new Product();  //entity for the form
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(CurrentProduct);
+        base.OnInitialized();
+    }
+
+}

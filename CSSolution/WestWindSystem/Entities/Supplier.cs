@@ -28,6 +28,7 @@ public partial class Supplier
 
     [Required]
     [StringLength(50)]
+    [EmailAddress(ErrorMessage = "Supplier email address is invalid.")]
     public string Email { get; set; }
 
     public int AddressID { get; set; }
