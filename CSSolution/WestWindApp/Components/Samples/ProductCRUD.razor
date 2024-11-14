@@ -50,13 +50,99 @@
     <ValidationSummary />
 
     <div class="row">
-        <div> class="offset-1 col-md-5">
+        <div class="offset-1 col-md-4">
             <label for="productid" class="form-label">Product ID</label> 
             <!-- bind-Value is required when using EditForm controls
                  EditForm controls are self closing
                  no type is need for the EditForm control-->
             <InputNumber @bind-Value="CurrentProduct.ProductID"
-                    class="form-control" id="productid" readonly />
+                    class="form-control" id="productid" readonly 
+                    style="width:75px;"/>
+            <br/>
+            <label for="productname" class="form-label">Product Name</label>
+            <InputText @bind-Value="CurrentProduct.ProductName"
+                         class="form-control" id="productname" 
+                         placeholder="product name"/>
+            <!-- ValidationMessage allows for the display of an annotation message
+                           associated with the indicated entity property
+                      -->
+            <ValidationMessage For="@(() => CurrentProduct.ProductName)" />
+            <br />
+            <label for="categoryid" class="form-label">Category</label>
+            <InputSelect id="categoryid" @bind-Value="CurrentProduct.CategoryID"
+                            class="form-control">
+                <option value="0">... select</option>
+                @foreach(Category cat in categoryList)
+                {
+                    @* 
+                        on this option the selected parameters is testing
+                        the current category id of the category list against
+                            the actual cagtegory id of your Product record
+                        if there is a match, the select line item will be the
+                            line item show on the page.
+                    *@
+                    <option value="@cat.CategoryID"
+                            selcted="@(cat.CategoryID == CurrentProduct.CategoryID)">
+                        @cat.CategoryName   
+                     </option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => CurrentProduct.CategoryID)" />
+            <br />
+            <label for="supplierid" class="form-label">Supplier</label>
+            <InputSelect id="supplierid" @bind-Value="CurrentProduct.SupplierID"
+                         class="form-control">
+                <option value="0">... select</option>
+                @foreach (Supplier sup in supplierList)
+                {
+                    @*
+                on this option the selected parameters is testing
+                the current category id of the category list against
+                the actual cagtegory id of your Product record
+                if there is a match, the select line item will be the
+                line item show on the page.
+                *@
+                    <option value="@sup.SupplierID"
+                            selcted="@(sup.SupplierID == CurrentProduct.SupplierID)">
+                        @sup.CompanyName
+                    </option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => CurrentProduct.SupplierID)" />
+        </div>
+        <div class="offset-1 col-md-4">
+            <label for="quanityperunit" class="form-label">Quantity per unit</label>
+            <InputText @bind-Value="CurrentProduct.QuantityPerUnit"
+                       class="form-control" id="quantityperunit"
+                       placeholder="qty per unit" />
+            <ValidationMessage For="@(() => CurrentProduct.QuantityPerUnit)" />
+            <br />
+            <label for="unitprice" class="form-label">Quantity per unit</label>
+            <InputNumber @bind-Value="CurrentProduct.UnitPrice"
+                       class="form-control" id="unitprice"
+                       placeholder="unit price" />
+            <ValidationMessage For="@(() => CurrentProduct.UnitPrice)" />
+            <br />
+            <label for="minimumorderquantity" class="form-label">Min Order Qty</label>
+            <InputNumber @bind-Value="CurrentProduct.MinimumOrderQuantity"
+                         class="form-control" id="minimumorderquantity"
+                         placeholder="min qty" />
+            <ValidationMessage For="@(() => CurrentProduct.MinimumOrderQuantity)" />
+            <br />
+            <label for="unitsonorder" class="form-label">Units on Order</label>
+            <InputNumber @bind-Value="CurrentProduct.UnitsOnOrder"
+                         class="form-control" id="unitsonorder"
+                         placeholder="order qty" />
+            <ValidationMessage For="@(() => CurrentProduct.UnitsOnOrder)" />
+        </div>
+    </div>
+    <br/><br/>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-outline-primary rounded-pill"
+                onclick="OnCreate" style="width:173px;">
+                Create
+            </button>
         </div>
     </div>
 </EditForm>
@@ -68,10 +154,24 @@
     private EditContext editContext;
     private Product CurrentProduct = new Product();  //entity for the form
 
+    [Inject]
+    public CategoryServices _categoryServices {get;set;}
+    private List<Category> categoryList = new List<Category>();
+
+    [Inject]
+    public SupplierServices _supplierServices {get;set;}
+    private List<Supplier> supplierList = new List<Supplier>();
+
     protected override void OnInitialized()
     {
         editContext = new EditContext(CurrentProduct);
+        categoryList = _categoryServices.Category_GetAll();
+        supplierList = _supplierServices.Supplier_GetAll();
         base.OnInitialized();
     }
 
+    private void OnCreate()
+    {
+        
+    }
 }
