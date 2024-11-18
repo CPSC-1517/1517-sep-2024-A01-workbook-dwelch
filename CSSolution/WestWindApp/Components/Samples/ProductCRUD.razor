@@ -43,6 +43,9 @@
                       errors can be from model properties or custom messages
                       this is optional
 
+     ValidationMessage displays a validation error message for the associated entity property
+                       this is optional
+
     one can still use bootstrap customization of the form appearance
 -->
 <EditForm EditContext="@editContext">
@@ -153,6 +156,7 @@
     //for EditForm
     private EditContext editContext;
     private Product CurrentProduct = new Product();  //entity for the form
+    ValidationMessageStore validationMessageStore;
 
     [Inject]
     public CategoryServices _categoryServices {get;set;}
@@ -162,16 +166,107 @@
     public SupplierServices _supplierServices {get;set;}
     private List<Supplier> supplierList = new List<Supplier>();
 
+    [Inject]
+    public ProductServices _productServices { get; set; }
+
     protected override void OnInitialized()
     {
         editContext = new EditContext(CurrentProduct);
+
+        //setup an instance for custom validation logic and tie it
+        //  to the editContext instance which is tied to your form
+        //  and is associated with a particular entity for its validation annotation
+        validationMessageStore = new ValidationMessageStore(editContext);
+
         categoryList = _categoryServices.Category_GetAll();
         supplierList = _supplierServices.Supplier_GetAll();
         base.OnInitialized();
     }
 
+    private Exception GetInnerException(Exception ex)
+    {
+        while (ex.InnerException != null)
+            ex = ex.InnerException;
+        return ex;
+    }
+
     private void OnCreate()
     {
-        
+        //clear out all old messaages
+        feedback = "";
+        errors.Clear();
+
+        try
+        {
+            //check out if the form passes the validation of the entity
+            if(editContext.Validate())
+            {
+                validationMessageStore.Clear();
+
+                //custom validation that is not in the entity set of validation
+                //  annotations
+
+                //in this example, we are checking to see if a selection
+                //  was done for the foreign key fields of the entity
+
+                //the CategoryID is an integer
+                //the default of an integer is 0
+                //the CategoryID has a given value )
+                //Problem: no foreign key/primary key on the database is 0
+                //         if a proper selection is not done, then when the
+                //              record is attempted to be added to the database
+                //              the database will throw an exception
+
+                //custom validation
+                if(CurrentProduct.CategoryID == 0)
+                {
+                    //construction
+                    // .Add to your instance of form validation messages
+                    // parameter 1: the associate field to display the message
+                    //                looking for the field indentifier
+                    //              nameof(xxxx) supplies the field indentifier
+                    // parameter 2: the message to display
+                    validationMessageStore.Add(editContext.Field(nameof(CurrentProduct.CategoryID)),
+                        "You must select a category");
+                }
+                if (CurrentProduct.SupplierID == 0)
+                {
+
+                    validationMessageStore.Add(editContext.Field(nameof(CurrentProduct.SupplierID)),
+                        "You must select a supplier");
+                }
+
+                //any other custom validation can be done at this point
+
+                //check to see if any custom validation errors have occured
+                //does not actually retreive the message for use, but checks
+                //  to see if .Any exist (return value of .Any is a bool)
+                if (editContext.GetValidationMessages().Any())
+                {
+                    //notify editContent that the state of validation messages has changed
+                    editContext.NotifyValidationStateChanged();
+                }
+                else
+                {
+                    //you can assume at this point that your data has passed
+                    //  the level of validation you have consider to be good
+                    //  for further processing of the record to the database
+
+                    //call a method within the ProductServices that will process
+                    //  the current product data; that is; add it to the database
+                    _productServices.Add(CurrentProduct);
+
+                    //if an error was thrown from the class library, control would go to
+                    //  the catch
+                    //if no error was thrown, then control continues within the try
+                    feedback = $"Product: {CurrentProduct.ProductName} has been added";
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            errors.Add($"System Error: {GetInnerException(ex).Message}");
+        }
+
     }
 }
