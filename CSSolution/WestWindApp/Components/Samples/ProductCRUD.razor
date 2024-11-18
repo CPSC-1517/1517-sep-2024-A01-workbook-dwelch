@@ -143,7 +143,7 @@
     <div class="row">
         <div class="col-md-12 text-center">
             <button type="submit" class="btn btn-outline-primary rounded-pill"
-                onclick="OnCreate" style="width:173px;">
+                 style="width:173px;" @onclick='OnCreate'>
                 Create
             </button>
         </div>
@@ -254,14 +254,22 @@
 
                     //call a method within the ProductServices that will process
                     //  the current product data; that is; add it to the database
-                    _productServices.Add(CurrentProduct);
+                    int newproductid = _productServices.Product_Add(CurrentProduct);
 
                     //if an error was thrown from the class library, control would go to
                     //  the catch
                     //if no error was thrown, then control continues within the try
-                    feedback = $"Product: {CurrentProduct.ProductName} has been added";
+                    feedback = $"Product: {CurrentProduct.ProductName} (ID: {newproductid}) has been added";
                 }
             }
+        }
+        catch (ArgumentNullException ex)
+        {
+            errors.Add($"Missing Data: {GetInnerException(ex).Message}");
+        }
+        catch (ArgumentException ex)
+        {
+            errors.Add($"Data Issue: {GetInnerException(ex).Message}");
         }
         catch(Exception ex)
         {
