@@ -204,7 +204,8 @@
         //            the current record on the database should be displayed to the use
         //            within this method, lookup the record to display
         //since the productid is a nullable variable, add the .Value to obtain the value
-        CurrentProduct = _productServices.Product_GetByID(productid.Value);
+        if(productid.HasValue)
+            CurrentProduct = _productServices.Product_GetByID(productid.Value);
         base.OnInitialized();
     }
 
