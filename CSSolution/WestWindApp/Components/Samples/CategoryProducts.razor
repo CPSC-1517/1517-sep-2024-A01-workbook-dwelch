@@ -40,6 +40,60 @@
     &nbsp;&nbsp;
     <button type="submit" class="btn btn-primary rounded-pill" @onclick="Fetch">Fetch Products</button>
 </div>
+
+<br/>
+<br/>
+<div class="row">
+    <div class="offset-2 col-md-8">
+        <!--
+            Problem: using the productList variable to control the rendering of the table
+                     productList will not be filled until the button is pressed
+                     however, the page needs an instance of productList to render the page
+                         to display the button to get the the productList
+                     looks like a chicken and egg problem
+            Solution: on declaring the productList, instantiate an empty instance of the list
+        -->
+        @if(productList.Count > 0)
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Product</th>
+                        <th>Supplier</th>
+                        <th>Unit Size</th>
+                        <th>Disc.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(Product item in productList)
+                    {
+                        <tr>
+                            <td>View</td>
+                            <td>@item.ProductName</td>
+                            <td>@item.Supplier.CompanyName</td>
+                            <td>@item.QuantityPerUnit</td>
+                            <!-- the ternary operation will only display a value
+                                  if the value makes sense
+                                 Only discontinued products will have a value displayed
+                            -->
+                            <td>@(item.Discontinued ? "Yes" : "")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            if(categoryidarg > 0)
+            {
+                <div class="col-md-12 text-center" style="font-size:48px; font-weight:bold;">
+                    <p>No products for the selected category</p>
+                </div>
+            }
+        }
+    </div>
+</div>
 @code {
     private string feedback = "";
     private List<string> errors = new List<string>();
@@ -74,6 +128,28 @@
 
     private void Fetch()
     {
-        feedback = "inside Fetch";
+        //clear old messages
+        feedback = "";
+        errors.Clear();
+
+        //check that a category has been selected
+        if (categoryidarg == 0)
+        {
+            feedback = "You must select a category to view products.";
+        }
+        else
+        {
+            try
+            {
+
+
+                //fetch the category products from the database to display
+                productList = _productServices.Product_GetByCategoryID(categoryidarg);
+            }
+            catch (Exception ex)
+            {
+                errors.Add($"System Error: {GetInnerException(ex).Message}");
+            }
+        }
     }
 }

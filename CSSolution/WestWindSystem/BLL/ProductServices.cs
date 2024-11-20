@@ -24,30 +24,31 @@ namespace WestWindSystem.BLL
         }
         #endregion
 
+        #region Queries
+        public List<Product> Product_GetByCategoryID(int categoryid)
+        {
+            IEnumerable<Product> info = _context.Products
+                                                .Where(p => p.CategoryID == categoryid)
+                                                .OrderBy(p => p.ProductName);
+            return info.ToList();
+        }
+        #endregion
+
         #region Maintainance Service: Add, Update and Delete
 
         //Adding a record to your database MAY require you to verify that the data does not already exist within the DB
-
         //verify that the incoming data is valid (do not trust the front end to do this work
-
         //you PK may not be created by the DB, it is supplied by the user
-
         //does the supplied PK already exist on the DB?
-
         //if so do not add record
-
         //these actions are referred to as business logic (business rules), hence the BLL
-
         //comment checcks
-
         //  was data actually sent to the services
-
         //  primary key tests (dependent on PK being IDENTITY or not)
 
         //custom checks
 
         //these are specific checks for your data beyond the primitive checks that may have been done on the form (presence, range, datatype)
-
         //Example of a custom check
 
         //  in this demo we will not allow a product
