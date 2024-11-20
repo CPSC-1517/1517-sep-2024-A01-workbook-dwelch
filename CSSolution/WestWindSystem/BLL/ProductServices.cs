@@ -32,6 +32,28 @@ namespace WestWindSystem.BLL
                                                 .OrderBy(p => p.ProductName);
             return info.ToList();
         }
+
+        public Product Product_GetByID(int productid)
+        {
+            //the .FirstOrDefault indicates that only a single record will be return at most
+            //  by the query.
+            //if the .FirstOrDefault is NOT on the query, it will return a collection of 0, 1 or more record
+            //  AND therefore would need to use IEnumerable<T>
+            Product info = _context.Products
+                                   .Where(p => p.ProductID == productid)
+                                   .FirstOrDefault();
+
+            //alterive queries
+            //the predicate can go directly into FirstOrDefault
+            //Product info = _context.Products
+            //                      .FirstOrDefault(p => p.ProductID == productid);
+
+            //the .Find will look for a record having a key value of the parameter
+            //Product info = _context.Products
+            //                      .Find(productid);
+
+            return info;
+        }
         #endregion
 
         #region Maintainance Service: Add, Update and Delete

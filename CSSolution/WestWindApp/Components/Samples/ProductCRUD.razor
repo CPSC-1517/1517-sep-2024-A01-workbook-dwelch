@@ -1,4 +1,12 @@
-﻿@page "/productcrud"
+﻿@page "/productcrud/{productid:int?}"
+<!--
+    on the page directive above, a routing parameter has been add
+    this will allow an integer value to be passed to this page
+    the routing parameter (productid) needs to be declare in your code area below
+
+    if you have the situation where your receive page may or maynot receive a parameter
+        value THEN make the datatype nullable (?)
+-->
 <PageTitle>Product CRUD</PageTitle>
 @rendermode InteractiveServer
 @using WestWindSystem.BLL;
@@ -153,6 +161,14 @@
     private string feedback = "";
     private List<string> errors = new List<string>();
 
+    //routing parameter
+    //this will receive a value from another location as the page is created
+    //this will can now be used on this page
+    //the datatype definition on the declare statement MUST match the routing parameter declaration
+    //NOTE: IF your parameter is of type string, you DO NOT need to add the ? 
+    [Parameter]
+    public int? productid { get; set; }
+
     //for EditForm
     private EditContext editContext;
     private Product CurrentProduct = new Product();  //entity for the form
@@ -180,6 +196,15 @@
 
         categoryList = _categoryServices.Category_GetAll();
         supplierList = _supplierServices.Supplier_GetAll();
+
+        //when the page is first render, we need to determind if the page was called with
+        //   a pkey parameter value
+        // No value: assumption is a NEW (create) product will be done, nothing to lookup
+        // Yes value: assumption an existing product record will be altered or deleted
+        //            the current record on the database should be displayed to the use
+        //            within this method, lookup the record to display
+        //since the productid is a nullable variable, add the .Value to obtain the value
+        CurrentProduct = _productServices.Product_GetByID(productid.Value);
         base.OnInitialized();
     }
 

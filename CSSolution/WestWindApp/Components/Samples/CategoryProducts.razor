@@ -68,8 +68,18 @@
                 <tbody>
                     @foreach(Product item in productList)
                     {
+                        // the link on the display line will send the display to the crud page
+                        // HOWEVER, an important piece of data also needs to be send to the crud page
+                        //          that piece of data is the pkey of the product to display on
+                        //                  the crud
+                        // Solution: The "View" needs to be an anchor tag to be able to transfer
+                        //              the user to the CRUD page
+                        //           we can add that information to the href as a routing parameter
+                        //           the crud page will need to alter its @page directive to capture
+                        //                the routing parameter
+                        //           on this page add the parameter value to send to the href
                         <tr>
-                            <td>View</td>
+                            <td><a href="/productcrud/@item.ProductID">View</a></td>
                             <td>@item.ProductName</td>
                             <td>@item.Supplier.CompanyName</td>
                             <td>@item.QuantityPerUnit</td>
