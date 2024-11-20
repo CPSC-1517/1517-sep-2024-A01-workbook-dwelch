@@ -27,8 +27,53 @@
         </ul>
     </div>
 }
-
+<div class="col-md-12">
+    <label for="catlist">Select a category</label>
+    &nbsp;&nbsp;
+    <select id="catlist" @bind="categoryidarg">
+        <option value="0">... select ..</option>
+        @foreach (Category item in categoryList)
+        {
+            <option value="@item.CategoryID">@item.CategoryName</option>
+        }
+    </select>
+    &nbsp;&nbsp;
+    <button type="submit" class="btn btn-primary rounded-pill" @onclick="Fetch">Fetch Products</button>
+</div>
 @code {
     private string feedback = "";
     private List<string> errors = new List<string>();
+
+    private int categoryidarg;
+
+    [Inject]
+    public CategoryServices _categoryServices { get; set; }
+    private List<Category> categoryList = new List<Category>();
+
+    [Inject]
+    public SupplierServices _supplierServices { get; set; }
+    private List<Supplier> supplierList = new List<Supplier>();
+
+    [Inject]
+    public ProductServices _productServices { get; set; }
+    public List<Product> productList = new List<Product>();
+
+    protected override void OnInitialized()
+    {
+        categoryList = _categoryServices.Category_GetAll();
+        supplierList = _supplierServices.Supplier_GetAll();
+        base.OnInitialized();
+    }
+
+    private Exception GetInnerException(Exception ex)
+    {
+        while (ex.InnerException != null)
+            ex = ex.InnerException;
+        return ex;
+    }
+
+    private void Fetch()
+    {
+        feedback = "inside Fetch";
+    }
 }
