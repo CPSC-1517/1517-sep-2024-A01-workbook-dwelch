@@ -1,0 +1,34 @@
+﻿@page "/categoryproducts"
+<PageTitle>Products By Category</PageTitle>
+@rendermode InteractiveServer
+@using WestWindSystem.BLL;
+@using WestWindSystem.Entities;
+
+<h3>Products  By Category</h3>
+<h4>... view products by category for CRUD Update/Delete selection</h4>
+
+<!-- area to feedback messages-->
+@if (feedback.Length > 0)
+{
+    <div class="alert alert-info">
+        <p>@feedback</p>
+    </div>
+}
+<!-- area to error messages-->
+@if (errors.Count > 0)
+{
+    <div class="alert alert-danger">
+        <p>Please fix the following issues:</p>
+        <ul>
+            @foreach (var error in errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    private string feedback = "";
+    private List<string> errors = new List<string>();
+}

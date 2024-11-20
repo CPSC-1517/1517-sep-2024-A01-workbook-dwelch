@@ -195,13 +195,14 @@
         //clear out all old messaages
         feedback = "";
         errors.Clear();
+        validationMessageStore.Clear();
 
         try
         {
             //check out if the form passes the validation of the entity
             if(editContext.Validate())
             {
-                validationMessageStore.Clear();
+               
 
                 //custom validation that is not in the entity set of validation
                 //  annotations
