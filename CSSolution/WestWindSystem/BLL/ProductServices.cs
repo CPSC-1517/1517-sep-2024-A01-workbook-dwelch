@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -149,6 +150,60 @@ namespace WestWindSystem.BLL
 
         }
 
+        public int Product_Update(Product item)
+        {
+            //was data actually passed for processing
+            if (item == null)
+            {
+                throw new ArgumentNullException("You must supply the product information");
+            }
+
+            //example of a custom business rule
+            bool exists = false;
+
+            //.Any(predicate)
+            // returns a true or false (not the data) depending on the success of the
+            //      predicate on the collection existing
+            //this is different then the .Where(predicate) that returns actual rows of data
+            //on the update one can change to record with the same supplier,
+            //  same name and same qty per unit with the same productid
+            //  HOWEVER, one need to check all other products to see if they already
+            //  have the same supplier,name and qty per unit
+            //  THERFORE the 4th condition which checks other products
+            exists = _context.Products
+                            .Any(p => p.SupplierID == item.SupplierID
+                                   && p.ProductName.Equals(item.ProductName)
+                                   && p.QuantityPerUnit.Equals(item.QuantityPerUnit)
+                                   && p.ProductID != item.ProductID);
+            if (exists)
+            {
+                throw new ArgumentException($"Product {item.ProductName} from" +
+                    $" {item.Supplier.CompanyName} of size {item.QuantityPerUnit} already " +
+                    $" exists on a different product.");
+            }
+
+            //SPECIAL!!!!!!! change productid so no record is affected
+            //comment out after your test
+            //item.ProductID = 9999;
+
+            //Staging
+            EntityEntry<Product> updating = _context.Entry(item);
+            updating.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+
+            //Commit
+            //After the successful commit to the database
+            //the resulting valid from the database is the "number of rows affected"
+            int rowsaffected = _context.SaveChanges();
+
+            //SPECIAL!!!! return a 0 rows affected to generate event message
+            //comment out after your test
+            //rowsaffected = 0;
+
+            return rowsaffected;
+
+
+
+        }
         #endregion
 
     }

@@ -39,6 +39,20 @@
     </select>
     &nbsp;&nbsp;
     <button type="submit" class="btn btn-primary rounded-pill" @onclick="Fetch">Fetch Products</button>
+    <!--
+            these two button will demonstrate ways that you can call
+            another page from an existing page
+            one button will have a NavLink to the new page
+            one button will call an event method on this page which
+                will navigate to the new page
+        -->
+    <button type="submit" class="btn btn-light rounded-pill">
+        <NavLink href="productcrud">NEW CRUD (via navlink)</NavLink>
+    </button>
+    &nbsp;&nbsp;
+    <button type="submit" class="btn btn-light rounded-pill"
+    @onclick="GoTo">NEW  CRUD (via event)</button>
+
 </div>
 
 <br/>
@@ -122,6 +136,9 @@
     public ProductServices _productServices { get; set; }
     public List<Product> productList = new List<Product>();
 
+    [Inject]
+    private NavigationManager _navManager { get; set; }
+
     protected override void OnInitialized()
     {
         categoryList = _categoryServices.Category_GetAll();
@@ -161,5 +178,10 @@
                 errors.Add($"System Error: {GetInnerException(ex).Message}");
             }
         }
+    }
+
+    public void GoTo()
+    {
+        _navManager.NavigateTo("productcrud");
     }
 }
