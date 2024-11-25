@@ -129,7 +129,7 @@
             <ValidationMessage For="@(() => CurrentProduct.QuantityPerUnit)" />
             <br />
             <label for="unitprice" class="form-label">Unit Price</label>
-            <InputNumber @bind-Value="CurrentProduct.UnitPrice"
+            <InputNumber @bind-Value="FormattedUnitPrice"
                        class="form-control" id="unitprice"
                        placeholder="unit price" />
             <ValidationMessage For="@(() => CurrentProduct.UnitPrice)" />
@@ -175,6 +175,16 @@
                 Discontinue
             </button>
             }
+            &nbsp;&nbsp;
+            <button type="submit" class="btn btn-outline-secondary rounded-pill"
+                    style="width:173px;" @onclick='OnClear'>
+                Clear
+            </button>
+            &nbsp;&nbsp;
+            <button type="submit" class="btn btn-outline-secondary rounded-pill"
+                    style="width:173px;" @onclick='OnGoTo'>
+                Return to Query
+            </button>
         </div>
     </div>
 </EditForm>
@@ -205,6 +215,12 @@
 
     [Inject]
     public ProductServices _productServices { get; set; }
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+
+    [Inject]
+    private NavigationManager navManager { get; set; }
 
     protected override void OnInitialized()
     {
@@ -493,5 +509,44 @@
         validationMessageStore.Clear();
 
         feedback = "Activating a discontinued product";
+    }
+
+    private async Task OnClear()
+    {
+        feedback = "";
+
+        //issue a prompt dialogue to the user to obtain confirmation of the action
+        //create your message for the dialogue box into a generic object
+        object[] messageline = new object[] {"Clearing will lose all unsaved data." +
+                " Are you sure you want to clear the form?" };
+        if (await JSRuntime.InvokeAsync<bool>("confirm", messageline))
+        {
+            errors.Clear(); //clear out all existing keys and their values from the Dictionary
+            feedback = "";
+            validationMessageStore.Clear();
+            CurrentProduct = new Product();
+            //remember to reset your editContext
+            editContext = new EditContext(CurrentProduct);
+        }
+    }
+
+    public async Task OnGoTo()
+    {
+        feedback = "";
+
+        //issue a prompt dialogue to the user to obtain confirmation of the action
+        //create your message for the dialogue box into a generic object
+        object[] messageline = new object[] {"Leaving the page will lose all unsaved data." +
+                " Are you sure you want to clear the form?" };
+        if (await JSRuntime.InvokeAsync<bool>("confirm", messageline))
+        {
+            navManager.NavigateTo("categoryproducts");
+        }
+    }
+
+    private decimal FormattedUnitPrice
+    {
+        get { return Math.Round(CurrentProduct.UnitPrice, 2); }
+        set { CurrentProduct.UnitPrice = value; }
     }
 }
