@@ -159,6 +159,22 @@
                     style="width:173px;" @onclick='OnUpdate'>
                 Update
             </button>
+            &nbsp;&nbsp;
+            @if(CurrentProduct.Discontinued)
+            {
+                <button type="submit" class="btn btn-outline-secondary rounded-pill"
+                        style="width:173px;" @onclick='OnActivate'>
+                    Activate
+                </button>
+            }
+            else
+            {
+
+            <button type="submit" class="btn btn-outline-secondary rounded-pill"
+                    style="width:173px;" @onclick='OnDelete'>
+                Discontinue
+            </button>
+            }
         </div>
     </div>
 </EditForm>
@@ -192,14 +208,14 @@
 
     protected override void OnInitialized()
     {
-         //when the page is first render, we need to determind if the page was called with
+        //when the page is first render, we need to determind if the page was called with
         //   a pkey parameter value
         // No value: assumption is a NEW (create) product will be done, nothing to lookup
         // Yes value: assumption an existing product record will be altered or deleted
         //            the current record on the database should be displayed to the use
         //            within this method, lookup the record to display
         //since the productid is a nullable variable, add the .Value to obtain the value
-        
+
         //NOTE!!!! for the update you will need to get the current database
         //          record BEFORE the page record instance is used in setting
         //          the EditContext for the form.
@@ -216,9 +232,9 @@
         categoryList = _categoryServices.Category_GetAll();
         supplierList = _supplierServices.Supplier_GetAll();
 
-       
 
-        
+
+
         base.OnInitialized();
     }
 
@@ -388,4 +404,94 @@
 
     }
 
+    private void OnDelete()
+    {
+        //Since the delete of CRUD could be either
+        //  a) physical
+        //  b) logical
+        //the processing on the page may differ
+
+        //if the delete is phyiscal
+        //  the necessary piece of data is actually just the primary key
+        //  however you still can pass the entire instance to your service
+
+        //if the delete is logical
+        //  then the necessary data is the entire instance
+        //  therefore you need to pass the entire VALID instance to your service
+
+        //clear out all old messaages
+        feedback = "";
+        errors.Clear();
+        validationMessageStore.Clear();
+
+        try
+        {
+            //check out if the form passes the validation of the entity
+            if (editContext.Validate())
+            {
+                //custom validation
+                if (CurrentProduct.CategoryID == 0)
+                {
+                    validationMessageStore.Add(editContext.Field(nameof(CurrentProduct.CategoryID)),
+                        "You must select a category");
+                }
+                if (CurrentProduct.SupplierID == 0)
+                {
+                    validationMessageStore.Add(editContext.Field(nameof(CurrentProduct.SupplierID)),
+                        "You must select a supplier");
+                }
+
+                if (editContext.GetValidationMessages().Any())
+                {
+                    editContext.NotifyValidationStateChanged();
+                }
+                else
+                {
+                    //SPECIAL!!!!! use to check that the result feedback message works
+                    //Comment out after doing the message check
+                    //CurrentProduct.ProductID = 9999;
+
+                    //call a method within the ProductServices that will process
+                    //  the current product data; that is; update it on the database
+                    //what will be return is the number of rows affected by the
+                    //  update on the database
+                    int rowsaffected = _productServices.Product_LogicalDelete(CurrentProduct);
+
+                    //the rowsaffected will dictate the message sent to the user
+                    if (rowsaffected != 0)
+                    {
+                        feedback = $"Product: {CurrentProduct.ProductName} " +
+                                $" (ID: {CurrentProduct.ProductID}) has been Discontinued";
+                    }
+                    else
+                    {
+                        feedback = $"Product: {CurrentProduct.ProductName} " +
+                                $" (ID: {CurrentProduct.ProductID}) was not found." +
+                                " Check to see if the product still exists on file.";
+                    }
+                }
+            }
+        }
+        catch (ArgumentNullException ex)
+        {
+            errors.Add($"Missing Data: {GetInnerException(ex).Message}");
+        }
+        catch (ArgumentException ex)
+        {
+            errors.Add($"Data Issue: {GetInnerException(ex).Message}");
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"System Error: {GetInnerException(ex).Message}");
+        }
+
+    }
+    private void OnActivate()
+    {
+        feedback = "";
+        errors.Clear();
+        validationMessageStore.Clear();
+
+        feedback = "Activating a discontinued product";
+    }
 }
